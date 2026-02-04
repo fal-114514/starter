@@ -39,12 +39,8 @@
   # Git Configuration / Git設定
   programs.git = {
     enable = true;
-    settings = {
-      user = {
-        name = var.user.gitUsername;
-        email = var.user.gitEmail;
-      };
-    };
+    userName = var.user.gitUsername;
+    userEmail = var.user.gitEmail;
   };
 
   # Terminal Prompt (Starship) / ターミナルプロンプト

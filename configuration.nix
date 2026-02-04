@@ -125,17 +125,13 @@ in
   # ---------------------------------------------------------------------------
 
   # GDM (Gnome Display Manager) / GDM（Gnomeディスプレイマネージャー）
-  services.displayManager.gdm.enable = (var.desktop.displayManager == "gdm");
+  services.xserver.displayManager.gdm.enable = (var.desktop.displayManager == "gdm");
 
   # SDDM (Simple Desktop Display Manager) / SDDM
   services.displayManager.sddm.enable = (var.desktop.displayManager == "sddm");
 
   # Lemurs (Terminal Login Manager) / Lemurs（ターミナルログインマネージャー）
   services.displayManager.lemurs.enable = (var.desktop.displayManager == "lemurs");
-  services.displayManager.lemurs.settings = {
-    wayland_sessions_path = "/etc/lemurs/wayland";
-  };
-   
 
   # ReGreet (GTK based Greeter) / ReGreet（GTKベースのグリーター）
   programs.regreet.enable = (var.desktop.displayManager == "regreet");
@@ -150,10 +146,10 @@ in
           if var.desktop.displayManager == "regreet" then
             "${pkgs.dbus}/bin/dbus-run-session ${pkgs.cage}/bin/cage -s -- ${pkgs.greetd.regreet}/bin/regreet"
           else if var.desktop.displayManager == "tuigreet" then
-            "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions /run/current-system/sw/share/wayland-sessions"
+            "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session"
           else
             # Fallback
-            "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions /run/current-system/sw/share/wayland-sessions";
+            "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
         user = "greeter";
       };
     };
@@ -173,7 +169,7 @@ in
   };
 
   # Gnome Desktop / Gnomeデスクトップ
-  services.desktopManager.gnome.enable = var.desktop.enableGnome;
+  services.xserver.desktopManager.gnome.enable = var.desktop.enableGnome;
 
   # Niri (Window Manager) / Niri（ウィンドウマネージャー）
   programs.niri.enable = var.desktop.enableNiri;
@@ -233,22 +229,4 @@ in
   
   # Experimental features / 実験的機能
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  # Lemurs Session Scripts / Lemursセッションスクリプト
-  environment.etc = {
-    "lemurs/wayland/Niri" = {
-      mode = "0755";
-      text = ''
-        #!${pkgs.bash}/bin/bash
-        exec niri-session
-      '';
-    };
-    "lemurs/wayland/Gnome" = {
-      mode = "0755";
-      text = ''
-        #!${pkgs.bash}/bin/bash
-        exec gnome-session
-      '';
-    };
-  };
 }
