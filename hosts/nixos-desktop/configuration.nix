@@ -44,7 +44,6 @@ in
   networking.networkmanager.enable = var.network.enableNetworkManager;
 
   # SSH Configuration / SSH設定
-  # SSH Configuration / SSH設定
   services.openssh = {
     enable = var.network.enableSSH;
     ports = [ var.network.sshPort ];
@@ -118,7 +117,6 @@ in
   # Desktop Environment / デスクトップ環境
   # ===========================================================================
   
-  # Enable XServer (Required for Gnome) / XServerを有効化（Gnomeに必要）
   # Enable XServer (Required for Gnome, etc.) / XServerを有効化（Gnome等に必要）
   services.xserver.enable = var.desktop.enableGnome;
   

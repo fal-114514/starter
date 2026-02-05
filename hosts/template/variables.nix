@@ -14,7 +14,7 @@
     name = "username";
     
     # User description (Full Name) / ユーザーの説明（フルネーム）
-    description = "Plese Enter Your Name";
+    description = "Please Enter Your Name";
     
     # Default shell / デフォルトシェル
     # Options: pkgs.bash, pkgs.zsh, pkgs.fish, pkgs.nushell
