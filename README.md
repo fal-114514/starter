@@ -17,7 +17,7 @@
 ## ディレクトリ構造 / Directory Structure
 
 ```plaintext
-starter/
+.
 ├── flake.nix               # エントリーポイント / Entry Point (ホスト定義)
 ├── hosts/                  # ホスト別の設定 / Host-specific configurations
 │   ├── nixos-desktop/      # 個人用環境
@@ -27,7 +27,7 @@ starter/
 │   │   └── config/         # アプリ別の設定ファイル (Niri等)
 │   └── template/           # 新規作成用テンプレート
 ├── modules/                # 共有モジュール / Shared modules
-│   ├── default.nix         # モ集約ファイル
+│   ├── default.nix         # モジュール集約ファイル
 │   └── DE/                 # デスクトップ環境 (GNOME, KDE, Niri)
 └── docs/                   # ドキュメント / Documentation
     ├── setup-guide.ja.md   # セットアップガイド (日本語)

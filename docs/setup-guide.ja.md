@@ -7,8 +7,8 @@
 このリポジトリをローカルに配置します。
 
 ```bash
-git clone <repository_url> nixos-config
-cd nixos-config/starter
+git clone https://github.com/fal-114514/nixos-seed.git nixos-config
+cd nixos-config
 ```
 
 ## 2. ディレクトリ構造の理解
@@ -64,4 +64,4 @@ sudo nixos-rebuild switch --flake .#your-host-name
 ## トラブルシューティング
 
 - **hardware-configuration.nix がない**: `hosts` ディレクトリ配下の各ホスト用フォルダに配置されていることを確認してください。
-- **ホスト名が一致しない**: `variables.nix` の `system.hostname` と `flake.nix` の定義名、および `nixos-rebuild` の `#` 移行の名前を一致させる必要があります。
+- **ホスト名が一致しない**: `variables.nix` の `system.hostname` と `flake.nix` の定義名、および `nixos-rebuild` の `#` 以降の名前を一致させる必要があります。
