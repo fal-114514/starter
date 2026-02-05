@@ -31,49 +31,54 @@
   # ===========================================================================
   outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs:
     let
-      # Load variables file / 変数ファイルの読み込み
-      var = import ./variables.nix;
-      
-      # System Architecture / システムアーキテクチャ
-      system = var.system.architecture;
+      # Define a helper to generate host config / ホスト設定を生成するヘルパー関数
+      mkHost = hostName: dir:
+        let
+          # Load variables file for this host / このホストの変数ファイルを読み込み
+          var = import (dir + "/variables.nix");
+          system = var.system.architecture;
+        in nixpkgs.lib.nixosSystem {
+          inherit system;
+          
+          # Pass arguments to modules / モジュールに引数を渡す
+          specialArgs = { inherit inputs var; };
+          
+          modules = [
+            # System Configuration / システム設定
+            (dir + "/configuration.nix")
+            
+            # Flatpak Support / Flatpakサポート
+            nix-flatpak.nixosModules.nix-flatpak
+
+            # ---------------------------------------------------------------------
+            # Home Manager Integration / Home Manager統合
+            # ---------------------------------------------------------------------
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              # Import user configuration / ユーザー設定をインポート
+              home-manager.users.${var.user.name} = import (dir + "/home.nix");
+
+              # Backup existing files / 既存ファイルのバックアップ
+              home-manager.backupFileExtension = "backup";
+
+              # Pass variables to Home Manager / Home Managerにも変数を渡す
+              home-manager.extraSpecialArgs = { inherit inputs var; };
+            }
+          ];
+        };
     in
     {
       # =========================================================================
-      # NixOS System Configuration / NixOSシステム設定
+      # NixOS Configurations / NixOS設定
       # =========================================================================
-      nixosConfigurations.${var.system.hostname} = nixpkgs.lib.nixosSystem {
-        inherit system;
-        
-        # Pass arguments to modules / モジュールに引数を渡す
-        specialArgs = { inherit inputs var; };
-        
-        modules = [
-          # System Configuration / システム設定
-          ./configuration.nix
-          
-          # Hardware Configuration / ハードウェア設定
-          ./hardware-configuration.nix
-          
-          # Flatpak Support / Flatpakサポート
-          nix-flatpak.nixosModules.nix-flatpak
+      nixosConfigurations = {
+        # Desktop Configuration / デスクトップ設定 (Personal / 個人用)
+        nixos-desktop = mkHost "nixos-desktop" ./hosts/nixos-desktop;
 
-          # ---------------------------------------------------------------------
-          # Home Manager Integration / Home Manager統合
-          # ---------------------------------------------------------------------
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            # Import user configuration / ユーザー設定をインポート
-            home-manager.users.${var.user.name} = import ./home.nix;
-
-            # Backup existing files / 既存ファイルのバックアップ
-            home-manager.backupFileExtension = "backup";
-
-            # Pass variables to Home Manager / Home Managerにも変数を渡す
-            home-manager.extraSpecialArgs = { inherit inputs var; };
-          }
-        ];
+        # Template Configuration / テンプレート設定
+        nixos-template = mkHost "nixos-template" ./hosts/template;
       };
     };
 }
