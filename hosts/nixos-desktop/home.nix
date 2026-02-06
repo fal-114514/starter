@@ -42,6 +42,22 @@
     };
   };
 
+  # IBus デーモンの自動起動（GNOME で日本語入力を有効にするために必須）
+  systemd.user.services.ibus-daemon = lib.mkIf var.desktop.enableGnome {
+    Unit = {
+      Description = "IBus Daemon";
+      After = [ "graphical-session-pre.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.ibus}/bin/ibus-daemon --xim --daemonize --replace";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   # ===========================================================================
   # Tool Configurations / ツール設定
   # ===========================================================================
@@ -92,14 +108,14 @@
     gnutar            # Tar utility / Tarユーティリティ
     iproute2          # Network tools / ネットワークツール
     unixtools.ping    # Ping tool / Pingツール
-    
+
     # ---------------------------------------------------------------------------
     # Development / 開発
     # ---------------------------------------------------------------------------
     gcc               # C Compiler / Cコンパイラ
     pkg-config
     vim               # Text Editor / テキストエディタ
-    
+
     # Development Libraries / 開発ライブラリ
     glib
     glib.dev
@@ -114,13 +130,13 @@
     light             # Backlight control / バックライト制御
     brightnessctl     # Brightness control / 輝度制御
     parted            # Partition tool / パーティションツール
-    
+
     # ---------------------------------------------------------------------------
     # Desktop Tools / デスクトップツール
     # ---------------------------------------------------------------------------
     mangohud          # Gaming overlay / ゲーミングオーバーレイ
     xdg-utils
-    
+
     # File Managers / ファイルマネージャー
     nnn               # Terminal FM / ターミナルFM
     pcmanfm           # GUI FM / GUI FM
@@ -131,11 +147,11 @@
     firefox
     vivaldi           # Web Browser / Webブラウザ
     vesktop           # Discord Client / Discordクライアント
-    
+
     # Download Managers / ダウンロードマネージャー
     motrix
     aria2
-    
+
     # Miscellaneous / その他
     plymouth          # Boot splash / ブートスプラッシュ
 
