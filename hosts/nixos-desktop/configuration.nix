@@ -10,7 +10,7 @@
 let
   # Helper function to get shell package from string
   # 文字列からシェルパッケージを取得するヘルパー関数
-  getShell = shellStr: 
+  getShell = shellStr:
     if shellStr == "pkgs.bash" then pkgs.bash
     else if shellStr == "pkgs.zsh" then pkgs.zsh
     else if shellStr == "pkgs.fish" then pkgs.fish
@@ -39,7 +39,7 @@ in
   # ===========================================================================
   # Network Configuration / ネットワーク設定
   # ===========================================================================
-  
+
   # Hostname / ホスト名
   networking.hostName = var.system.hostname;
 
@@ -127,10 +127,10 @@ in
   # ===========================================================================
   # Desktop Environment / デスクトップ環境
   # ===========================================================================
-  
-  # Enable XServer (Required for Gnome, etc.) / XServerを有効化（Gnome等に必要）
-  services.xserver.enable = var.desktop.enableGnome;
-  
+
+  # Enable XServer (Required for Gnome, KDE, etc.) / XServerを有効化（Gnome、KDE等に必要）
+  services.xserver.enable = var.desktop.enableGnome || var.desktop.enableKde;
+
   # ---------------------------------------------------------------------------
   # Login Manager / ログインマネージャー
   # ---------------------------------------------------------------------------
@@ -146,21 +146,21 @@ in
 
   # ReGreet (GTK based Greeter) / ReGreet（GTKベースのグリーター）
   programs.regreet.enable = (var.desktop.displayManager == "regreet");
-  
-  # Greetd Configuration (for Tuigreet and ReGreet) 
+
+  # Greetd Configuration (for Tuigreet and ReGreet)
   # Greetd設定（TuigreetおよびReGreet用）
   services.greetd = {
     enable = (var.desktop.displayManager == "tuigreet" || var.desktop.displayManager == "regreet");
     settings = {
       default_session = {
-        command = 
+        command =
           if var.desktop.displayManager == "regreet" then
             "${pkgs.dbus}/bin/dbus-run-session ${pkgs.cage}/bin/cage -s -- ${pkgs.greetd.regreet}/bin/regreet"
           else if var.desktop.displayManager == "tuigreet" then
-            "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions"
+            "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions"
           else
             # Fallback
-            "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions";
+            "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions";
         user = "greeter";
       };
     };
@@ -182,6 +182,9 @@ in
   # Gnome Desktop / Gnomeデスクトップ
   services.desktopManager.gnome.enable = var.desktop.enableGnome;
 
+  # KDE Plasma Desktop / KDE Plasmaデスクトップ
+  services.desktopManager.plasma6.enable = var.desktop.enableKde;
+
   # Niri (Window Manager) / Niri（ウィンドウマネージャー）
   programs.niri.enable = var.desktop.enableNiri;
 
@@ -190,19 +193,21 @@ in
     # Wayland / DE specific settings
     # 選択されたデスクトップ環境に応じて動的に設定
     XDG_SESSION_TYPE = "wayland";
-    XDG_CURRENT_DESKTOP = if var.desktop.enableNiri then "niri" 
+    XDG_CURRENT_DESKTOP = if var.desktop.enableNiri then "niri"
                           else if var.desktop.enableGnome then "gnome"
                           else if var.desktop.enableKde then "kde"
                           else "sway"; # Fallback
-    XDG_SESSION_DESKTOP = if var.desktop.enableNiri then "niri" 
+    XDG_SESSION_DESKTOP = if var.desktop.enableNiri then "niri"
                           else if var.desktop.enableGnome then "gnome"
                           else if var.desktop.enableKde then "kde"
                           else "sway"; # Fallback
-    
+
     # Input Method（GNOME は IBus、それ以外は fcitx5）
     GTK_IM_MODULE = if var.desktop.enableGnome then "ibus" else "fcitx";
     QT_IM_MODULE = if var.desktop.enableGnome then "ibus" else "fcitx";
     XMODIFIERS = if var.desktop.enableGnome then "@im=ibus" else "@im=fcitx";
+    # IBus の場合、デーモンアドレスを設定
+    IBUS_DAEMON_ADDRESS = if var.desktop.enableGnome then "unix:path=/run/user/1000/ibus/ibus-daemon" else "";
   };
 
   # ===========================================================================
@@ -218,7 +223,7 @@ in
   # ===========================================================================
   # System Packages / システムパッケージ
   # ===========================================================================
-  
+
   # Allow unfree packages / 非フリーパッケージを許可
   nixpkgs.config.allowUnfree = true;
 
@@ -226,7 +231,7 @@ in
     # Core Tools / コアツール
     git
     vim
-    
+
     # Dependencies / 依存関係
     adwaita-icon-theme # For ReGreet
   ];
@@ -245,7 +250,7 @@ in
   # System State / システム状態
   # ===========================================================================
   system.stateVersion = var.system.stateVersion;
-  
+
   # Experimental features / 実験的機能
   # Nix settings / Nix設定
   nix = {
