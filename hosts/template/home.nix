@@ -5,7 +5,7 @@
 # このファイルはユーザー固有のパッケージと設定を管理します。
 # =============================================================================
 
-{ config, pkgs, var, ... }:
+{ config, lib, pkgs, var, ... }:
 
 {
   imports = [
@@ -29,6 +29,16 @@
   # インポートされたモジュールで管理されます (./DE/* を参照)
   xdg.configFile = {
     # Common configurations can go here / 共通の設定はここに記述
+  };
+
+  # GNOME: 日本語入力（IBus Mozc）を入力ソースに追加（必須）
+  dconf.settings = lib.mkIf var.desktop.enableGnome {
+    "org/gnome/desktop/input-sources" = {
+      sources = [
+        (lib.hm.gvariant.mkTuple [ "xkb" "jp" ])
+        (lib.hm.gvariant.mkTuple [ "ibus" "mozc-jp" ])
+      ];
+    };
   };
 
   # ===========================================================================
