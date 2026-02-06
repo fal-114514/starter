@@ -67,7 +67,7 @@
     niriConfigPath = ./config/DE/niri/config.kdl;
 
     # Enable KDE Plasma / KDE Plasmaを有効化
-    enableKde = false;
+    enableKde = true;
     kdeConfigPath = ./config/DE/kde/default.nix;
 
     # Login Manager / ログインマネージャー
