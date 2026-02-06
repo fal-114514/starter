@@ -88,15 +88,20 @@ in
     };
 
     # Input Method (Japanese) / 入力メソッド（日本語）
-    # このブロックは i18n = { ... } 内のため、inputMethod で i18n.inputMethod になる
-    inputMethod = {
+    # GNOME は標準で IBus を使用するため、GNOME 時は IBus + mozc に切り替え（NixOS Wiki 推奨）
+    # それ以外の DE（Niri/KDE 等）では fcitx5 + mozc
+    inputMethod = if var.desktop.enableGnome then {
+      enable = true;
+      type = "ibus";
+      ibus.engines = with pkgs.ibus-engines; [ mozc ];
+    } else {
       enable = var.inputMethod.enable;
       type = var.inputMethod.type;
       fcitx5.addons = with pkgs; [
         fcitx5-mozc
-        fcitx5-gtk   # GTK アプリ用
+        fcitx5-gtk
       ];
-      fcitx5.waylandFrontend = true;  # Wayland で日本語入力するために必要
+      fcitx5.waylandFrontend = true;
     };
   };
 
@@ -194,10 +199,10 @@ in
                           else if var.desktop.enableKde then "kde"
                           else "sway"; # Fallback
     
-    # Input Method
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
+    # Input Method（GNOME は IBus、それ以外は fcitx5）
+    GTK_IM_MODULE = if var.desktop.enableGnome then "ibus" else "fcitx";
+    QT_IM_MODULE = if var.desktop.enableGnome then "ibus" else "fcitx";
+    XMODIFIERS = if var.desktop.enableGnome then "@im=ibus" else "@im=fcitx";
   };
 
   # ===========================================================================
