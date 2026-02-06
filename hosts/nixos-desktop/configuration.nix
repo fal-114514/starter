@@ -202,12 +202,15 @@ in
     XDG_SESSION_DESKTOP = if var.desktop.enableNiri then "niri"
                           else if var.desktop.enableGnome then "gnome"
                           else if var.desktop.enableKde then "kde"
-                          else "sway"; # Fallback
-
     # Input Method
-    GTK_IM_MODULE = if var.inputMethod.type == "fcitx5" then "fcitx" else "ibus";
-    QT_IM_MODULE = if var.inputMethod.type == "fcitx5" then "fcitx" else "ibus";
+    # Wayland native applications should not use IM_MODULE variables.
+    # WaylandネイティブアプリはIM_MODULE変数を使用すべきではありません。
+    # Fcitx5 handles Wayland via the waylandFrontend option.
+    # Fcitx5はwaylandFrontendオプションでWaylandを処理します。
+    GTK_IM_MODULE = lib.mkIf (var.inputMethod.type == "ibus") "ibus";
+    QT_IM_MODULE = lib.mkIf (var.inputMethod.type == "ibus") "ibus";
     XMODIFIERS = if var.inputMethod.type == "fcitx5" then "@im=fcitx" else "@im=ibus";
+
     # IBus の場合、デーモンアドレスを設定
     IBUS_DAEMON_ADDRESS = lib.mkIf (var.inputMethod.type == "ibus") "unix:path=/run/user/1000/ibus/ibus-daemon";
   };
@@ -236,6 +239,9 @@ in
 
     # Dependencies / 依存関係
     adwaita-icon-theme # For ReGreet
+
+    # Input Method Tools / 入力メソッドツール
+    fcitx5-configtool # For Fcitx5 configuration GUI
   ];
 
   # Flatpak support / Flatpakサポート
