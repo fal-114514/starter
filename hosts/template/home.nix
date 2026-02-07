@@ -9,7 +9,6 @@
 
 {
   imports = [
-    ./modules
     ../../modules/home.nix
   ];
 
