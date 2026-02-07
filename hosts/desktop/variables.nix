@@ -30,7 +30,7 @@
   # ---------------------------------------------------------------------------
   system = {
     # Hostname / ホスト名
-    hostname = "nixos-desktop";
+    hostname = "desktop";
 
     # System architecture / システムアーキテクチャ
     architecture = "x86_64-linux";
