@@ -259,7 +259,7 @@ in
   services.flatpak.enable = true;
 
   # Virtualization / 仮想化
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd.enable = false;
   virtualisation.virtualbox.guest.enable = var.system.isVM;
 
   # Binary compatibility / バイナリ互換性
