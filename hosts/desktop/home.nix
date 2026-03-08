@@ -118,7 +118,7 @@
     # ---------------------------------------------------------------------------
     gcc               # C Compiler / Cコンパイラ
     pkg-config
-    vim               # Text Editor / テキストエディタ
+    # vim は environment.systemPackages で管理するため削除
 
     # Development Libraries / 開発ライブラリ
     glib
@@ -157,7 +157,7 @@
     aria2
 
     # Miscellaneous / その他
-    plymouth          # Boot splash / ブートスプラッシュ
+    # plymouth は boot.plymouth.enable でシステム設定として管理するため削除
 
     # Wine (Windows Compatibility)
     wineWow64Packages.full

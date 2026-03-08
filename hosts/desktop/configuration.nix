@@ -32,8 +32,9 @@ in
   # ===========================================================================
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # Early load graphics driver for VirtualBox (if isVM is true)
-  # VirtualBox用のグラフィックスドライバを早期読み込み（isVMがtrueの場合）
+  # Early load graphics driver for VMware (if isVM is true)
+  # VMware用のグラフィックスドライバを早期読み込み（isVMがtrueの場合）
+  # Note: VirtualBox の場合は virtualisation.virtualbox.guest が自動的に処理するため不要
   boot.initrd.kernelModules = if var.system.isVM then [ "vmwgfx" ] else [ ];
 
   # ===========================================================================
@@ -51,7 +52,8 @@ in
     enable = var.network.enableSSH;
     ports = [ var.network.sshPort ];
     settings = {
-      PasswordAuthentication = true;
+      # パスワード認証を無効化し、公開鍵認証のみ許可（セキュリティ強化）
+      PasswordAuthentication = false;
       PermitRootLogin = "no";
     };
   };
@@ -102,7 +104,8 @@ in
         fcitx5-mozc
         fcitx5-gtk
       ]);
-      fcitx5.waylandFrontend = (var.inputMethod.type == "fcitx5");
+      # lib.mkIf でガードし、ibus使用時に fcitx5 オプションへアクセスするのを防ぐ
+      fcitx5.waylandFrontend = lib.mkIf (var.inputMethod.type == "fcitx5") true;
       # デフォルトを Mozc（日本語）にし、レイアウトを jp に（「日本語」選択時に実際に変換できるようにする）
       fcitx5.settings.inputMethod = lib.mkIf (var.inputMethod.type == "fcitx5") {
         "GroupOrder" = { "0" = "Default"; };
@@ -203,20 +206,15 @@ in
 
   # Session Variables / セッション変数
   environment.sessionVariables = {
-    # Wayland / DE specific settings
-    # 選択されたデスクトップ環境に応じて動的に設定
+    # XDG_SESSION_TYPE のみ設定する
+    # XDG_CURRENT_DESKTOP / XDG_SESSION_DESKTOP は各セッションの .desktop ファイルが
+    # ログインマネージャー経由で自動設定するため、ここで上書きすると複数DE共存時に
+    # 「GNOME設定が開けない」等の問題が発生するため削除
     XDG_SESSION_TYPE = "wayland";
-    XDG_CURRENT_DESKTOP = if var.desktop.enableNiri then "niri"
-                          else if var.desktop.enableGnome then "gnome"
-                          else if var.desktop.enableKde then "kde"
-                          else "sway"; # Fallback
-    XDG_SESSION_DESKTOP = if var.desktop.enableNiri then "niri"
-                          else if var.desktop.enableGnome then "gnome"
-                          else if var.desktop.enableKde then "kde"
-                          else "sway"; # Fallback
-    # Input Method（Qt/GTK アプリが IM を使うために必要。KDE で「日本語」選択時に英語のままになるのはこれが未設定のため）
-    GTK_IM_MODULE = if var.inputMethod.type == "ibus" then "ibus" else "fcitx";
-    QT_IM_MODULE = if var.inputMethod.type == "ibus" then "ibus" else "fcitx";
+
+    # Input Method
+    # GTK_IM_MODULE / QT_IM_MODULE は GNOME 46+ / KDE Plasma 6 の Wayland セッションでは
+    # 設定すると逆に入力メソッドが壊れるため削除。XMODIFIERS のみ設定する。
     XMODIFIERS = if var.inputMethod.type == "fcitx5" then "@im=fcitx" else "@im=ibus";
 
     # IBus の場合、デーモンアドレスを設定
@@ -254,6 +252,10 @@ in
 
   # Flatpak support / Flatpakサポート
   services.flatpak.enable = true;
+
+  # Boot splash screen / ブートスプラッシュ画面
+  # home.packages の plymouth は削除し、ここでシステム設定として有効化
+  boot.plymouth.enable = true;
 
   # Virtualization / 仮想化
   virtualisation.libvirtd.enable = true;

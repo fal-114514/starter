@@ -22,8 +22,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Flatpak Management / Flatpak管理
-    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+    # ?ref=latest は再現性がないため、確認済み安定版タグ v0.7.0 で固定
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
   };
 
   # ===========================================================================
@@ -76,9 +76,6 @@
       nixosConfigurations = {
         # Desktop Configuration / デスクトップ設定 (Personal / 個人用)
         desktop = mkHost "desktop" ./hosts/desktop;
-
-        # Template Configuration / テンプレート設定
-        nixos-template = mkHost "nixos-template" ./hosts/template;
       };
     };
 }
