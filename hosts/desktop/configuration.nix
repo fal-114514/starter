@@ -17,7 +17,7 @@ let
 
   # VMware環境等（vmwgfxドライバが必要な環境）にインストールする場合はtrueに設定してください
   # 注意: VirtualBoxの場合は virtualisation.virtualbox.guest が自動的に処理するため不要
-  isVM = true;
+  isVM = false;
 
   # ---------------------------------------------------------------------------
   # Desktop Environment / デスクトップ環境

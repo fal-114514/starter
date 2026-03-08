@@ -28,7 +28,8 @@ in
   # Imports / 外部ファイルインポート
   # ===========================================================================
   imports = lib.optionals enableGnome [ ./config/DE/gnome/default.nix ]
-         ++ lib.optionals enableKde [ ./config/DE/kde/default.nix ];
+          ++ lib.optionals enableKde [ ./config/DE/kde/default.nix ]
+          ++ lib.optionals enableNiri [ ./config/DE/niri/default.nix ];
 
   # ===========================================================================
   # Basic Settings / 基本設定
@@ -37,17 +38,6 @@ in
   home.homeDirectory = "/home/${username}";
   home.stateVersion = stateVersion;
 
-  # Niri Configuration / Niri用設定リンク
-  xdg.configFile."niri/config.kdl" = lib.mkIf enableNiri {
-    source = ./config/DE/niri/config.kdl;
-  };
-
-  # GNOME Input Sources / GNOME用入力ソース設定
-  dconf.settings = lib.mkIf enableGnome {
-    "org/gnome/desktop/input-sources".sources = [
-      (lib.hm.gvariant.mkTuple [ "xkb" fcitx5Layout ])
-    ];
-  };
 
   # ===========================================================================
   # Tool Configurations / ツール設定
@@ -95,8 +85,5 @@ in
 
     # Wine
     wineWow64Packages.full
-  ] ++ lib.optionals enableNiri [
-    # Niri Packages
-    xwayland-satellite xbindkeys swaybg
   ];
 }
