@@ -22,8 +22,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Flatpak Management / Flatpak管理
-    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+    # ?ref=latest は再現性がないため、確認済み安定版タグ v0.7.0 で固定
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
   };
 
   # ===========================================================================
@@ -33,7 +33,7 @@
     let
       # Load variables file / 変数ファイルの読み込み
       var = import ./variables.nix;
-      
+
       # System Architecture / システムアーキテクチャ
       system = var.system.architecture;
     in
@@ -43,17 +43,17 @@
       # =========================================================================
       nixosConfigurations.${var.system.hostname} = nixpkgs.lib.nixosSystem {
         inherit system;
-        
+
         # Pass arguments to modules / モジュールに引数を渡す
         specialArgs = { inherit inputs var; };
-        
+
         modules = [
           # System Configuration / システム設定
           ./configuration.nix
-          
+
           # Hardware Configuration / ハードウェア設定
           ./hardware-configuration.nix
-          
+
           # Flatpak Support / Flatpakサポート
           nix-flatpak.nixosModules.nix-flatpak
 

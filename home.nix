@@ -104,7 +104,6 @@
     # ---------------------------------------------------------------------------
     gcc               # C Compiler / Cコンパイラ
     pkg-config
-    vim               # Text Editor / テキストエディタ
 
     # Development Libraries / 開発ライブラリ
     glib
@@ -117,7 +116,6 @@
     # ---------------------------------------------------------------------------
     # Hardware Tools / ハードウェアツール
     # ---------------------------------------------------------------------------
-    light             # Backlight control / バックライト制御
     brightnessctl     # Brightness control / 輝度制御
     parted            # Partition tool / パーティションツール
 
@@ -142,7 +140,7 @@
     aria2
 
     # Miscellaneous / その他
-    plymouth          # Boot splash / ブートスプラッシュ
+    # plymouth は boot.plymouth.enable でシステム設定として管理するため削除
 
     # Wine (Windows Compatibility)
     wineWow64Packages.full
