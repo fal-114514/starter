@@ -20,37 +20,11 @@
 .
 ├── flake.nix               # エントリーポイント / Entry Point (ホスト定義)
 ├── hosts/                  # ホスト別の設定 / Host-specific configurations
-│   ├── desktop/            # 個人用環境
-│   │   ├── variables.nix   # ホスト別変数設定
-│   │   ├── configuration.nix
-│   │   ├── home.nix
-│   │   ├── config/         # アプリ別の設定ファイル
-│   │   │   └── DE/         # デスクトップ環境別設定 (Niri等)
-│   │   └── modules/        # ホスト固有モジュール
-│   │       └── default.nix
-│   └── template/           # 新規ホスト作成用テンプレート
-│       ├── variables.nix
-│       ├── configuration.nix
-│       ├── home.nix
-│       ├── config/
-│       │   └── DE/
-│       └── modules/
-│           └── default.nix
-├── modules/                # 共有モジュール / Shared modules
-│   ├── default.nix         # モジュール集約ファイル
-│   ├── home.nix            # 共有Home Manager設定
-│   ├── DE/                 # デスクトップ環境 (GNOME, KDE, Niri)
-│   │   ├── gnome/
-│   │   │   ├── gnome.nix   # Home Manager設定
-│   │   │   └── nixos.nix   # NixOS設定
-│   │   ├── kde/
-│   │   │   ├── kde.nix
-│   │   │   └── nixos.nix
-│   │   └── niri/
-│   │       ├── niri.nix
-│   │       └── nixos.nix
-│   └── examples/           # モジュールテンプレート例
-│       └── service-template.nix
+│   └── desktop/            # 個人用環境
+│       ├── configuration.nix # システム設定 (変数はこの中の let 句で定義)
+│       ├── home.nix          # ユーザー設定 (変数はこの中の let 句で定義)
+│       └── config/         # アプリ別の設定ファイル
+│           └── DE/         # デスクトップ環境別設定 (Niri等)
 └── docs/                   # ドキュメント / Documentation
     ├── setup-guide.ja.md   # セットアップガイド (日本語)
     ├── setup-guide.en.md   # Setup Guide (English)
@@ -59,10 +33,9 @@
 
 ## 仕組み / Mechanism
 
-1.  **マルチホスト**: `hosts/` ディレクトリ配下にマシンごとの設定を完全に分離して配置します。
-2.  **共有モジュール**: デスクトップ環境のパッケージ構成や基本的なリンク処理は `modules/` で一元管理され、各ホストから必要に応じて読み込まれます。
-3.  **変数の活用**: 各ホストの `variables.nix` で、ユーザー名、ホスト名、有効にするDE、設定ファイルのパスなどを一括管理します。
-4.  **ホスト固有モジュール**: 各ホストは `modules/default.nix` を持ち、ホスト固有の追加モジュールを定義できます。
+1.  **直接的な設定**: `variables.nix` のような独自の抽象化レイヤーを廃止し、`configuration.nix` や `home.nix` の冒頭にある `let ... in` ブロックで直接設定（ユーザー名やデスクトップ環境の有効化など）を定義します。
+2.  **標準的な Flake 構成**: NixOS の標準的な Flake の書き方に準拠しており、外部ドキュメントや例をそのまま参考にしやすくなっています。
+3.  **モジュールの整理**: 複雑な共有モジュール構造を廃止し、必要なデスクトップ設定（GNOME, KDE, Niri）を `home.nix` で必要に応じてインポートする明解な構造にしました。
 
 詳細な構造と仕組みについては、[**構成説明書 (日本語)**](./docs/architecture.ja.md) を参照してください。
 
