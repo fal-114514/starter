@@ -1,67 +1,69 @@
 # =============================================================================
 # NixOS System Configuration / NixOSシステム設定
 # =============================================================================
-# This is the main system configuration file.
-# これはメインのシステム設定ファイルです。
-# =============================================================================
 
-{ config, pkgs, var, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
-  # Helper function to get shell package from string
-  # 文字列からシェルパッケージを取得するヘルパー関数
-  getShell = shellStr:
-    if shellStr == "pkgs.bash" then pkgs.bash
-    else if shellStr == "pkgs.zsh" then pkgs.zsh
-    else if shellStr == "pkgs.fish" then pkgs.fish
-    else if shellStr == "pkgs.nushell" then pkgs.nushell
-    else pkgs.bash;
+  # ---------------------------------------------------------------------------
+  # Basic Settings / 基本設定
+  # ---------------------------------------------------------------------------
+  username = "fal";
+  userDescription = "Fal";
+  hostname = "desktop";
+  timeZone = "Asia/Tokyo";
+  defaultLocale = "en_US.UTF-8";
+  extraLocale = "ja_JP.UTF-8";
+
+  # VMware環境等（vmwgfxドライバが必要な環境）にインストールする場合はtrueに設定してください
+  # 注意: VirtualBoxの場合は virtualisation.virtualbox.guest が自動的に処理するため不要
+  isVM = true;
+
+  # ---------------------------------------------------------------------------
+  # Desktop Environment / デスクトップ環境
+  # ---------------------------------------------------------------------------
+  enableGnome = true;
+  enableKde = true;
+  enableNiri = true;
+
+  # Display Manager: "tuigreet", "gdm", "sddm", "regreet", "lemurs"
+  displayManager = "tuigreet";
+
+  # ---------------------------------------------------------------------------
+  # Input Method / 入力メソッド
+  # ---------------------------------------------------------------------------
+  enableMozc = true;
+  fcitx5Layout = "us";
 in
 {
-  imports =
-    [ # Include hardware configuration / ハードウェア設定を含める
-      # If you haven't generated it yet, run 'nixos-generate-config'
-      # まだ生成していない場合は、'nixos-generate-config'を実行してください
-      ./hardware-configuration.nix
-      # Include host-local and shared modules / ホスト固有および共有モジュールを含める
-      ./modules
-    ];
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
   # ===========================================================================
   # Boot Configuration / ブート設定
   # ===========================================================================
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # Early load graphics driver for VMware (if isVM is true)
-  # VMware用のグラフィックスドライバを早期読み込み（isVMがtrueの場合）
-  # Note: VirtualBox の場合は virtualisation.virtualbox.guest が自動的に処理するため不要
-  boot.initrd.kernelModules = if var.system.isVM then [ "vmwgfx" ] else [ ];
+  boot.initrd.kernelModules = lib.mkIf isVM [ "vmwgfx" ];
+  boot.plymouth.enable = true;
 
   # ===========================================================================
-  # Network Configuration / ネットワーク設定
+  # Network & SSH / ネットワークとSSH
   # ===========================================================================
+  networking.hostName = hostname;
+  networking.networkmanager.enable = true;
 
-  # Hostname / ホスト名
-  networking.hostName = var.system.hostname;
-
-  # Network Manager / ネットワーク管理
-  networking.networkmanager.enable = var.network.enableNetworkManager;
-
-  # SSH Configuration / SSH設定
   services.openssh = {
-    enable = var.network.enableSSH;
-    ports = [ var.network.sshPort ];
+    enable = true;
+    ports = [ 22 ];
     settings = {
-      # パスワード認証を無効化し、公開鍵認証のみ許可（セキュリティ強化）
       PasswordAuthentication = false;
       PermitRootLogin = "no";
     };
   };
-  networking.firewall.allowedTCPPorts = [ var.network.sshPort ];
+  networking.firewall.allowedTCPPorts = [ 22 ];
 
-  # ===========================================================================
-  # System Limits & Performance / システム制限とパフォーマンス
-  # ===========================================================================
   security.pam.loginLimits = [
     { domain = "*"; type = "soft"; item = "nofile"; value = "1048576"; }
     { domain = "*"; type = "hard"; item = "nofile"; value = "1048576"; }
@@ -70,62 +72,46 @@ in
   # ===========================================================================
   # Localization / ローカライゼーション
   # ===========================================================================
-
-  # Time Zone / タイムゾーン
-  time.timeZone = var.system.timeZone;
-
-  # Set hardware clock to local time (for dual-boot with Windows)
-  # ハードウェアクロックをローカルタイムに設定（Windowsとのデュアルブート用）
+  time.timeZone = timeZone;
   time.hardwareClockInLocalTime = true;
 
-  # Locale / ロケール
   i18n = {
-    defaultLocale = var.system.defaultLocale;
+    defaultLocale = defaultLocale;
     extraLocaleSettings = {
-      LC_ADDRESS = var.system.extraLocale;
-      LC_IDENTIFICATION = var.system.extraLocale;
-      LC_MEASUREMENT = var.system.extraLocale;
-      LC_MONETARY = var.system.extraLocale;
-      LC_NAME = var.system.extraLocale;
-      LC_NUMERIC = var.system.extraLocale;
-      LC_PAPER = var.system.extraLocale;
-      LC_TELEPHONE = var.system.extraLocale;
-      LC_TIME = var.system.extraLocale;
+      LC_ADDRESS = extraLocale;
+      LC_IDENTIFICATION = extraLocale;
+      LC_MEASUREMENT = extraLocale;
+      LC_MONETARY = extraLocale;
+      LC_NAME = extraLocale;
+      LC_NUMERIC = extraLocale;
+      LC_PAPER = extraLocale;
+      LC_TELEPHONE = extraLocale;
+      LC_TIME = extraLocale;
     };
 
-    # Input Method (Japanese) / 入力メソッド（日本語）
-    # Use the input method defined in variables.nix
-    # variables.nix で定義された入力メソッドを使用
-    inputMethod = {
-      enable = var.inputMethod.enable;
-      type = var.inputMethod.type;
-      ibus.engines = lib.mkIf (var.inputMethod.type == "ibus") (with pkgs.ibus-engines; [ mozc ]);
-      fcitx5.addons = lib.mkIf (var.inputMethod.type == "fcitx5") (with pkgs; [
-        fcitx5-mozc
-        fcitx5-gtk
-      ]);
-      # lib.mkIf でガードし、ibus使用時に fcitx5 オプションへアクセスするのを防ぐ
-      fcitx5.waylandFrontend = lib.mkIf (var.inputMethod.type == "fcitx5") true;
-      # デフォルトを Mozc（日本語）にし、レイアウトを jp に（「日本語」選択時に実際に変換できるようにする）
-      fcitx5.settings.inputMethod = lib.mkIf (var.inputMethod.type == "fcitx5") {
+    inputMethod = lib.mkIf enableMozc {
+      enable = true;
+      type = "fcitx5";
+      fcitx5.addons = with pkgs; [ fcitx5-mozc fcitx5-gtk ];
+      fcitx5.waylandFrontend = true;
+      fcitx5.settings.inputMethod = {
         "GroupOrder" = { "0" = "Default"; };
         "Groups/0" = {
           Name = "Default";
-          "Default Layout" = var.inputMethod.fcitx5Layout;
+          "Default Layout" = fcitx5Layout;
           DefaultIM = "mozc";
         };
-        "Groups/0/Items/0" = { Name = "keyboard-${var.inputMethod.fcitx5Layout}"; };
+        "Groups/0/Items/0" = { Name = "keyboard-${fcitx5Layout}"; };
         "Groups/0/Items/1" = { Name = "mozc"; };
       };
     };
   };
 
   services.xserver.xkb = {
-    layout = var.inputMethod.fcitx5Layout;
+    layout = fcitx5Layout;
     variant = "";
   };
 
-  # Fonts / フォント
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
@@ -147,47 +133,30 @@ in
   # ===========================================================================
   # Desktop Environment / デスクトップ環境
   # ===========================================================================
+  services.xserver.enable = enableGnome || enableKde;
+  services.desktopManager.gnome.enable = enableGnome;
+  services.desktopManager.plasma6.enable = enableKde;
+  programs.niri.enable = enableNiri;
 
-  # Enable XServer (Required for Gnome, KDE, etc.) / XServerを有効化（Gnome、KDE等に必要）
-  services.xserver.enable = var.desktop.enableGnome || var.desktop.enableKde;
+  # Display Manager / ログインマネージャー
+  services.displayManager.gdm.enable = displayManager == "gdm";
+  services.displayManager.sddm.enable = displayManager == "sddm";
+  programs.regreet.enable = displayManager == "regreet";
 
-  # ---------------------------------------------------------------------------
-  # Login Manager / ログインマネージャー
-  # ---------------------------------------------------------------------------
-
-  # GDM (Gnome Display Manager) / GDM（Gnomeディスプレイマネージャー）
-  services.displayManager.gdm.enable = (var.desktop.displayManager == "gdm");
-
-  # SDDM (Simple Desktop Display Manager) / SDDM
-  services.displayManager.sddm.enable = (var.desktop.displayManager == "sddm");
-
-  # Lemurs (Terminal Login Manager) / Lemurs（ターミナルログインマネージャー）
-  # services.displayManager.lemurs.enable = (var.desktop.displayManager == "lemurs");
-
-  # ReGreet (GTK based Greeter) / ReGreet（GTKベースのグリーター）
-  programs.regreet.enable = (var.desktop.displayManager == "regreet");
-
-  # Greetd Configuration (for Tuigreet and ReGreet)
-  # Greetd設定（TuigreetおよびReGreet用）
   services.greetd = {
-    enable = (var.desktop.displayManager == "tuigreet" || var.desktop.displayManager == "regreet");
+    enable = displayManager == "tuigreet" || displayManager == "regreet";
     settings = {
       default_session = {
         command =
-          if var.desktop.displayManager == "regreet" then
+          if displayManager == "regreet" then
             "${pkgs.dbus}/bin/dbus-run-session ${pkgs.cage}/bin/cage -s -- ${pkgs.greetd.regreet}/bin/regreet"
-          else if var.desktop.displayManager == "tuigreet" then
-            "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions"
           else
-            # Fallback
             "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions";
         user = "greeter";
       };
     };
   };
 
-  # TTY control for Greetd (Prevents visual glitches)
-  # GreetdのTTY制御（表示乱れを防止）
   systemd.services.greetd.serviceConfig = {
     Type = "idle";
     StandardInput = "tty";
@@ -199,78 +168,43 @@ in
     VTNr = 1;
   };
 
-  # SSH AskPassword の競合を解決（Gnome と KDE の両方が有効な場合）
-  # Gnome の seahorse を優先し、KDE 単独の場合は ksshaskpass を使用
-  programs.ssh.askPassword = lib.mkIf (var.desktop.enableGnome && var.desktop.enableKde)
+  programs.ssh.askPassword = lib.mkIf (enableGnome && enableKde)
     (lib.mkForce "${pkgs.gnome-keyring}/libexec/seahorse/ssh-askpass");
 
-  # Session Variables / セッション変数
   environment.sessionVariables = {
-    # XDG_SESSION_TYPE のみ設定する
-    # XDG_CURRENT_DESKTOP / XDG_SESSION_DESKTOP は各セッションの .desktop ファイルが
-    # ログインマネージャー経由で自動設定するため、ここで上書きすると複数DE共存時に
-    # 「GNOME設定が開けない」等の問題が発生するため削除
     XDG_SESSION_TYPE = "wayland";
-
-    # Input Method
-    # GTK_IM_MODULE / QT_IM_MODULE は GNOME 46+ / KDE Plasma 6 の Wayland セッションでは
-    # 設定すると逆に入力メソッドが壊れるため削除。XMODIFIERS のみ設定する。
-    XMODIFIERS = if var.inputMethod.type == "fcitx5" then "@im=fcitx" else "@im=ibus";
-
-    # IBus の場合、デーモンアドレスを設定
-    IBUS_DAEMON_ADDRESS = lib.mkIf (var.inputMethod.type == "ibus") "unix:path=/run/user/1000/ibus/ibus-daemon";
+    XMODIFIERS = if enableMozc then "@im=fcitx" else "";
   };
 
   # ===========================================================================
   # User Account / ユーザーアカウント
   # ===========================================================================
-  users.users.${var.user.name} = {
+  users.users.${username} = {
     isNormalUser = true;
-    description = var.user.description;
+    description = userDescription;
     extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
-    shell = getShell var.user.shell;
+    shell = pkgs.nushell;
   };
 
   # ===========================================================================
-  # System Packages / システムパッケージ
+  # System Packages & Services / システムパッケージとサービス
   # ===========================================================================
-
-  # Allow unfree packages / 非フリーパッケージを許可
   nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
-    # Core Tools / コアツール
     git
     vim
-
-    # Dependencies / 依存関係
-    adwaita-icon-theme # For ReGreet
-
-    # Input Method Tools / 入力メソッドツール
-    qt6Packages.fcitx5-configtool # For Fcitx5 configuration GUI
+    adwaita-icon-theme
+    qt6Packages.fcitx5-configtool
   ];
 
-  # Flatpak support / Flatpakサポート
   services.flatpak.enable = true;
-
-  # Boot splash screen / ブートスプラッシュ画面
-  # home.packages の plymouth は削除し、ここでシステム設定として有効化
-  boot.plymouth.enable = true;
-
-  # Virtualization / 仮想化
-  virtualisation.libvirtd.enable = true;
-  virtualisation.virtualbox.guest.enable = var.system.isVM;
-
-  # Binary compatibility / バイナリ互換性
+  virtualisation.libvirtd.enable = false;
+  virtualisation.virtualbox.guest.enable = isVM;
   programs.nix-ld.enable = true;
 
-  # ===========================================================================
-  # System State / システム状態
-  # ===========================================================================
-  system.stateVersion = var.system.stateVersion;
+  # System State / システムステート
+  system.stateVersion = "25.11";
 
-  # Experimental features / 実験的機能
-  # Nix settings / Nix設定
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];

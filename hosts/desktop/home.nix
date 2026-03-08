@@ -1,91 +1,69 @@
 # =============================================================================
 # Home Manager Configuration / Home Manager設定
 # =============================================================================
-# This file manages user-specific packages and configurations.
-# このファイルはユーザー固有のパッケージと設定を管理します。
-# =============================================================================
 
-{ config, lib, pkgs, var, ... }:
+{ pkgs, lib, ... }:
 
+let
+  username = "fal";
+  gitUsername = "Fal";
+  gitEmail = "fal@example.com";
+  stateVersion = "25.11";
+
+  # ---------------------------------------------------------------------------
+  # Desktop Settings / デスクトップ環境設定
+  # ---------------------------------------------------------------------------
+  enableGnome = true;
+  enableKde = true;
+  enableNiri = true;
+
+  # ---------------------------------------------------------------------------
+  # Input Method Settings / 入力メソッド設定
+  # ---------------------------------------------------------------------------
+  enableMozc = true;
+  fcitx5Layout = "us";
+in
 {
-  imports = [
-    ../../modules/home.nix
-  ];
+  # ===========================================================================
+  # Imports / 外部ファイルインポート
+  # ===========================================================================
+  imports = lib.optionals enableGnome [ ./config/DE/gnome/default.nix ]
+         ++ lib.optionals enableKde [ ./config/DE/kde/default.nix ];
 
   # ===========================================================================
-  # User Information / ユーザー情報
+  # Basic Settings / 基本設定
   # ===========================================================================
-  # Retrieved from variables.nix / variables.nixから取得
-  home.username = var.user.name;
-  home.homeDirectory = "/home/${var.user.name}";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
+  home.stateVersion = stateVersion;
 
-  # State Version / ステートバージョン
-
-  home.stateVersion = var.system.stateVersion;
-
-  # Link DE configuration files / DE設定ファイルのリンク
-  # Managed by imported modules (see ./DE/*)
-  # インポートされたモジュールで管理されます (./DE/* を参照)
-  xdg.configFile = {
-    # Common configurations can go here / 共通の設定はここに記述
+  # Niri Configuration / Niri用設定リンク
+  xdg.configFile."niri/config.kdl" = lib.mkIf enableNiri {
+    source = ./config/DE/niri/config.kdl;
   };
 
-  # GNOME: 日本語入力（IBus Mozc）を入力ソースに追加（必須）
-  # 設定しないと「キーボードの入力ソース」に日本語が表示されず変換できない
-  dconf.settings = lib.mkIf (var.desktop.enableGnome) {
-    "org/gnome/desktop/input-sources" = if var.inputMethod.type == "ibus" then {
-      sources = [
-        (lib.hm.gvariant.mkTuple [ "xkb" "jp" ])
-        (lib.hm.gvariant.mkTuple [ "ibus" "mozc-jp" ])
-      ];
-    } else {
-      # Fcitx5 の場合は xkb のみ（Fcitx5側で制御するため）
-      sources = [
-        (lib.hm.gvariant.mkTuple [ "xkb" var.inputMethod.fcitx5Layout ])
-      ];
-    };
-  };
-
-  # IBus デーモンの自動起動（GNOME で日本語入力を有効にするために必須）
-  systemd.user.services.ibus-daemon = lib.mkIf (var.desktop.enableGnome && var.inputMethod.type == "ibus") {
-    Unit = {
-      Description = "IBus Daemon";
-      After = [ "graphical-session-pre.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.ibus}/bin/ibus-daemon --xim --daemonize --replace";
-      Restart = "on-failure";
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
+  # GNOME Input Sources / GNOME用入力ソース設定
+  dconf.settings = lib.mkIf enableGnome {
+    "org/gnome/desktop/input-sources".sources = [
+      (lib.hm.gvariant.mkTuple [ "xkb" fcitx5Layout ])
+    ];
   };
 
   # ===========================================================================
   # Tool Configurations / ツール設定
   # ===========================================================================
-
-  # Git Configuration / Git設定
   programs.git = {
     enable = true;
     settings = {
       user = {
-        name = var.user.gitUsername;
-        email = var.user.gitEmail;
+        name = gitUsername;
+        email = gitEmail;
       };
     };
   };
 
-  # Terminal Prompt (Starship) / ターミナルプロンプト
   programs.starship.enable = true;
-
-  # Terminal Emulator (Ghostty) / ターミナルエミュレータ
-  programs.ghostty = {
-    enable = true;
-  };
-
-  # Shell History (Atuin) / シェル履歴
+  programs.ghostty.enable = true;
   programs.atuin = {
     enable = true;
     enableNushellIntegration = true;
@@ -100,66 +78,25 @@
   # User Packages / ユーザーパッケージ
   # ===========================================================================
   home.packages = with pkgs; [
-    # ---------------------------------------------------------------------------
     # System Utilities / システムユーティリティ
-    # ---------------------------------------------------------------------------
-    wget              # Download utility / ダウンロードユーティリティ
-    curl              # URL transfer utility / URL転送ユーティリティ
-    zip               # Zip archiving / Zipアーカイブ
-    unzip             # Zip extraction / Zip展開
-    p7zip             # 7-Zip support / 7-Zipサポート
-    rar               # Rar support / Rarサポート
-    gnutar            # Tar utility / Tarユーティリティ
-    iproute2          # Network tools / ネットワークツール
-    unixtools.ping    # Ping tool / Pingツール
+    wget curl zip unzip p7zip rar gnutar iproute2 unixtools.ping
 
-    # ---------------------------------------------------------------------------
     # Development / 開発
-    # ---------------------------------------------------------------------------
-    gcc               # C Compiler / Cコンパイラ
-    pkg-config
-    # vim は environment.systemPackages で管理するため削除
+    gcc pkg-config glib glib.dev gtk3.dev pango.dev cairo.dev gdk-pixbuf
 
-    # Development Libraries / 開発ライブラリ
-    glib
-    glib.dev
-    gtk3.dev
-    pango.dev
-    cairo.dev
-    gdk-pixbuf
-
-    # ---------------------------------------------------------------------------
     # Hardware Tools / ハードウェアツール
-    # ---------------------------------------------------------------------------
-    light             # Backlight control / バックライト制御
-    brightnessctl     # Brightness control / 輝度制御
-    parted            # Partition tool / パーティションツール
+    brightnessctl parted
 
-    # ---------------------------------------------------------------------------
     # Desktop Tools / デスクトップツール
-    # ---------------------------------------------------------------------------
-    mangohud          # Gaming overlay / ゲーミングオーバーレイ
-    xdg-utils
+    mangohud xdg-utils nnn pcmanfm
 
-    # File Managers / ファイルマネージャー
-    nnn               # Terminal FM / ターミナルFM
-    pcmanfm           # GUI FM / GUI FM
-
-    # ---------------------------------------------------------------------------
     # Applications / アプリケーション
-    # ---------------------------------------------------------------------------
-    firefox
-    vivaldi           # Web Browser / Webブラウザ
-    vesktop           # Discord Client / Discordクライアント
+    firefox vivaldi vesktop motrix aria2
 
-    # Download Managers / ダウンロードマネージャー
-    motrix
-    aria2
-
-    # Miscellaneous / その他
-    # plymouth は boot.plymouth.enable でシステム設定として管理するため削除
-
-    # Wine (Windows Compatibility)
+    # Wine
     wineWow64Packages.full
+  ] ++ lib.optionals enableNiri [
+    # Niri Packages
+    xwayland-satellite xbindkeys swaybg
   ];
 }
