@@ -37,6 +37,8 @@ let
 in
 {
   imports = [
+    # hardware-configuration.nix が見つからない場合は、
+    # 'nixos-generate-config --show-hardware-config' を実行して生成してください。
     ./hardware-configuration.nix
   ];
 
