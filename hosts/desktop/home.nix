@@ -27,10 +27,10 @@ in
   # ===========================================================================
   # Imports / 外部ファイルインポート
   # ===========================================================================
-  imports = [ ./config/vscode/vscode.nix ]
-          ++ lib.optionals enableGnome [ ./config/DE/gnome/default.nix ]
-          ++ lib.optionals enableKde [ ./config/DE/kde/default.nix ]
-          ++ lib.optionals enableNiri [ ./config/DE/niri/default.nix ];
+  imports = [ ./modules/vscode/vscode.nix ]
+          ++ lib.optionals enableGnome [ ./modules/DE/gnome/default.nix ]
+          ++ lib.optionals enableKde [ ./modules/DE/kde/default.nix ]
+          ++ lib.optionals enableNiri [ ./modules/DE/niri/default.nix ];
 
   # ===========================================================================
   # Basic Settings / 基本設定
