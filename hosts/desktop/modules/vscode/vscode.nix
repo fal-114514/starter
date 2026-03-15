@@ -94,424 +94,448 @@
 # ・言語別の個別最適化（[language]ブロック）は、内容に関わらずすべて 5. LANGUAGES に集約する。
 # ============================================================================
 
-{ ... }:
+{ lib, ... }:
 
+let
+  appearance = {
+    # =======================================================================
+    #  1. 外観・視覚 (APPEARANCE & VISUAL)
+    # =======================================================================
+
+    # テーマ・アイコン
+    "workbench.colorTheme" = "R Dark Pro (Filter Night Late)";
+    "workbench.iconTheme" = "flow-dim";
+    "workbench.productIconTheme" = "tara-product-icons";
+
+    # カラーカスタマイズ（テーマ固有の調整）
+    "workbench.colorCustomizations" = {
+      "editorBracketHighlight.foreground1" = "#84a2d4";
+      "editorBracketHighlight.foreground2" = "#b683d4";
+      "editorBracketHighlight.foreground3" = "#d483a1";
+      "editorBracketHighlight.foreground4" = "#d4b683";
+      "editorBracketHighlight.foreground5" = "#a1d483";
+      "editorBracketHighlight.foreground6" = "#83d4b6";
+      "editorBracketPairGuide.activeBackground1" = "#84a2d4";
+      "editorBracketPairGuide.activeBackground2" = "#b683d4";
+      "editorBracketPairGuide.activeBackground3" = "#d483a1";
+      "editorBracketPairGuide.activeBackground4" = "#d4b683";
+      "editorBracketPairGuide.activeBackground5" = "#a1d483";
+      "editorBracketPairGuide.activeBackground6" = "#83d4b6";
+      "editorBracketPairGuide.background1" = "#84a2d440";
+      "editorBracketPairGuide.background2" = "#b683d440";
+      "editorBracketPairGuide.background3" = "#d483a140";
+      "editorBracketPairGuide.background4" = "#d4b68340";
+      "editorBracketPairGuide.background5" = "#a1d48340";
+      "editorBracketPairGuide.background6" = "#83d4b640";
+      "editorIndentGuide.activeBackground1" = "#84a2d4";
+      "editorIndentGuide.activeBackground2" = "#b683d4";
+      "editorIndentGuide.activeBackground3" = "#d483a1";
+      "editorIndentGuide.activeBackground4" = "#d4b683";
+      "editorIndentGuide.activeBackground5" = "#a1d483";
+      "editorIndentGuide.activeBackground6" = "#83d4b6";
+      "editorIndentGuide.background1" = "#84a2d440";
+      "editorIndentGuide.background2" = "#b683d440";
+      "editorIndentGuide.background3" = "#d483a140";
+      "editorIndentGuide.background4" = "#d4b68340";
+      "editorIndentGuide.background5" = "#a1d48340";
+      "editorIndentGuide.background6" = "#83d4b640";
+      "[Pink as Fox (blackest)]" = {
+        "window.activeBorder" = "#555555";
+        "window.inactiveBorder" = "#555555";
+        "editorGroup.border" = "#555555";
+        "editorGroupHeader.tabsBorder" = "#555555";
+        "tab.border" = "#555555";
+        "tab.activeBorder" = "#555555";
+        "tab.unfocusedActiveBorder" = "#555555";
+        "sideBar.border" = "#555555";
+        "sideBarSectionHeader.border" = "#555555";
+        "panel.border" = "#555555";
+        "panelSection.border" = "#555555";
+        "statusBar.border" = "#555555";
+        "activityBar.border" = "#555555";
+        "editorWidget.border" = "#555555";
+        "settings.headerBorder" = "#555555";
+        "titleBar.border" = "#555555";
+        "menubar.selectionBorder" = "#555555";
+        "input.border" = "#555555";
+        "dropdown.border" = "#555555";
+      };
+      "[Tara*]" = {
+        "statusBar.background" = "#FFFFFF14";
+        "statusBar.foreground" = "#FFFFFF";
+        "statusBarItem.prominentBackground" = "#FFFFFF26";
+        "statusBarItem.prominentForeground" = "#FFFFFF";
+        "statusBar.debuggingBackground" = "#FFFFFF33";
+        "statusBar.debuggingForeground" = "#FFFFFF";
+        "toolbar.activeBackground" = "#FFFFFF26";
+        "button.background" = "#FFFFFF";
+        "button.hoverBackground" = "#FFFFFFcc";
+        "extensionButton.separator" = "#FFFFFF33";
+        "extensionButton.background" = "#FFFFFF14";
+        "extensionButton.foreground" = "#FFFFFF";
+        "extensionButton.hoverBackground" = "#FFFFFF33";
+        "extensionButton.prominentForeground" = "#FFFFFF";
+        "extensionButton.prominentBackground" = "#FFFFFF14";
+        "extensionButton.prominentHoverBackground" = "#FFFFFF33";
+        "activityBarBadge.background" = "#FFFFFF";
+        "activityBar.activeBorder" = "#FFFFFF";
+        "activityBarTop.activeBorder" = "#FFFFFF";
+        "list.inactiveSelectionIconForeground" = "#FFFFFF";
+        "list.activeSelectionForeground" = "#FFFFFF";
+        "list.inactiveSelectionForeground" = "#FFFFFF";
+        "list.highlightForeground" = "#FFFFFF";
+        "sash.hoverBorder" = "#FFFFFF80";
+        "list.activeSelectionIconForeground" = "#FFFFFF";
+        "scrollbarSlider.activeBackground" = "#FFFFFF80";
+        "editorSuggestWidget.highlightForeground" = "#FFFFFF";
+        "textLink.foreground" = "#FFFFFF";
+        "progressBar.background" = "#FFFFFF";
+        "pickerGroup.foreground" = "#FFFFFF";
+        "tab.activeBorder" = "#FFFFFF";
+        "tab.activeBorderTop" = "#FFFFFF00";
+        "tab.unfocusedActiveBorder" = "#FFFFFF";
+        "tab.unfocusedActiveBorderTop" = "#FFFFFF00";
+        "tab.activeModifiedBorder" = "#FFFFFF00";
+        "notificationLink.foreground" = "#FFFFFF";
+        "editorWidget.resizeBorder" = "#FFFFFF";
+        "editorWidget.border" = "#FFFFFF";
+        "settings.modifiedItemIndicator" = "#FFFFFF";
+        "panelTitle.activeBorder" = "#FFFFFF";
+        "breadcrumb.activeSelectionForeground" = "#FFFFFF";
+        "menu.selectionForeground" = "#FFFFFF";
+        "menubar.selectionForeground" = "#FFFFFF";
+        "editor.findMatchBorder" = "#FFFFFF";
+        "selection.background" = "#FFFFFF40";
+        "statusBarItem.remoteBackground" = "#FFFFFF14";
+        "statusBarItem.remoteHoverBackground" = "#FFFFFF";
+        "statusBarItem.remoteForeground" = "#FFFFFF";
+        "notebook.inactiveFocusedCellBorder" = "#FFFFFF80";
+        "commandCenter.activeBorder" = "#FFFFFF80";
+        "chat.slashCommandForeground" = "#FFFFFF";
+        "chat.avatarForeground" = "#FFFFFF";
+        "activityBarBadge.foreground" = "#FFFFFF";
+        "button.foreground" = "#FFFFFF";
+        "statusBarItem.remoteHoverForeground" = "#FFFFFF";
+      };
+    };
+    "nishuuu.accentColor" = "white";
+
+    # フォント設定
+    "editor.fontFamily" = "'Monaspace Argon', 'Maple Mono NF CN', 'PlemolJP Console NF', 'Cascadia Code'";
+    "editor.fontLigatures" = "'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03'";
+    "editor.fontSize" = 14;
+    "editor.fontWeight" = "400";
+    "editor.lineHeight" = 1.4;
+
+    # UIコンポーネント
+    "explorer.compactFolders" = false;
+    "workbench.editor.showTabs" = "multiple";
+    "workbench.tree.indent" = 18;
+
+    # ミニマップ設定
+    "editor.minimap.autohide" = "mouseover";
+    "editor.minimap.enabled" = true;
+    "editor.minimap.maxColumn" = 100;
+    "editor.minimap.renderCharacters" = false;
+    "editor.minimap.showSlider" = "mouseover";
+    "editor.minimap.side" = "right";
+    "editor.minimap.size" = "proportional";
+
+    # スクロールバー
+    "editor.scrollbar.vertical" = "visible";
+    "editor.scrollbar.horizontal" = "auto";
+
+    # 視覚効果（拡張機能依存）
+    "glowrays.advancedMode" = true;
+    "glowrays.enable" = false;
+    "glowrays.intensity" = 1.6;
+    "material-icon-theme.activeIconPack" = "angular_ngrx";
+    "material-icon-theme.folders.theme" = "classic";
+    "nyanMode.nyanAlign" = "left";
+    "nyanMode.nyanDiagnostics" = true;
+    "nyanMode.nyanDisplayPercent" = false;
+    "powermode.combo.location" = "off";
+    "powermode.combo.threshold" = 1;
+    "powermode.combo.timeout" = 10;
+    "powermode.enabled" = true;
+    "powermode.presets" = "particles";
+    "powermode.shake.enabled" = false;
+    "resmon.show.cpufreq" = false;
+    "resmon.show.cputemp" = false;
+    "resmon.show.cpuusage" = false;
+    "resmon.show.disk" = false;
+    "resmon.show.mem" = false;
+
+  };
+
+  editorUX = {
+    # =======================================================================
+    #  2. 操作・編集体験 (EDITOR & UX)
+    # =======================================================================
+
+    # カーソル
+    "editor.cursorBlinking" = "phase";
+    "editor.cursorSmoothCaretAnimation" = "on";
+    "editor.cursorStyle" = "block";
+
+    # スクロール
+    "editor.mouseWheelZoom" = true;
+    "editor.smoothScrolling" = true;
+    "workbench.list.smoothScrolling" = true;
+
+    # コード表示
+    "editor.bracketPairColorization.enabled" = true;
+    "editor.renderWhitespace" = "trailing";
+    "editor.semanticHighlighting.enabled" = true;
+    "editor.stickyScroll.enabled" = true;
+    "editor.stickyScroll.maxLineCount" = 5;
+    "editor.unicodeHighlight.nonBasicASCII" = false;
+
+    # エディターガイド
+    "blockhighlight.accentCurrentLine" = true;
+    "blockhighlight.background" = [ "255" "255" "255" ".00" ]; # "80", "180", "255", ".015"
+    "blockhighlight.isWholeLine" = false;
+    "dimmer.enabled" = false;
+    "editor.guides.bracketPairs" = true;
+    "editor.guides.bracketPairsHorizontal" = true;
+    "editor.guides.highlightActiveIndentation" = true;
+    "editor.guides.indentation" = true;
+    "editor.renderLineHighlight" = "all";
+    "indentRainbow.colors" = [
+      "#84a2d430" # #84a2d4
+      "#b683d430" # #b683d4
+      "#d483a130" # #d483a1
+      "#d4b68330" # #d4b683
+      "#a1d48330" # #a1d483
+      "#83d4b630" # #83d4b6
+    ];
+    "indentRainbow.indicatorStyle" = "light";
+    "indentRainbow.lightIndicatorStyleLineWidth" = 1;
+    "textIndentHighlighter.colors" = [
+      "#84a2d4"
+      "#b683d4"
+      "#d483a1"
+      "#d4b683"
+      "#a1d483"
+      "#83d4b6"
+    ];
+
+    # 補完・提案
+    "editor.inlayHints.enabled" = "onUnlessPressed";
+    "editor.inlineSuggest.edits.allowCodeShifting" = "horizontal";
+    "editor.linkedEditing" = true;
+    "editor.quickSuggestions" = {
+      "strings" = true;
+    };
+
+    # 安全性・信頼性
+    "editor.accessibilitySupport" = "auto";
+    "editor.rename.enablePreview" = false;
+
+    # エラー表示
+    "errorLens.excludeByMessage" = [ "Unknown word" ];
+    "errorLens.gutterIconsEnabled" = true;
+
+    # タブ
+    "editor.tabSize" = 2;
+
+    # Diffエディタ
+    "diffEditor.codeLens" = true;
+    "diffEditor.maxComputationTime" = 0;
+
+    # ModalEdit
+    "modaledit.keybindings" = {
+      "i" = "modaledit.enterInsert";
+      "escape" = "modaledit.enterNormal";
+    };
+
+  };
+
+  filesAndEditor = {
+    # =======================================================================
+    #  3. ファイル・エディタ制御 (FILES & EDITOR CONTROL)
+    # =======================================================================
+
+    # ファイル管理
+    "files.eol" = "\n";
+    "files.exclude" = {
+      "**/.git" = true;
+      "**/.vscode" = true;
+      "**/dist" = true;
+      "**/node_modules" = true;
+    };
+    "files.watcherExclude" = {
+      "**/build/**" = true;
+      "**/coverage/**" = true;
+      "**/dist/**" = true;
+      "**/node_modules/**" = true;
+    };
+
+    # ファイルネスティング（関連ファイルのグループ化）
+    "explorer.fileNesting.patterns" = {
+      "*.db" = "\${capture}.\${extname}-*";
+      "*.db3" = "\${capture}.\${extname}-*";
+      "*.js" = "\${capture}.js.map, \${capture}.min.js, \${capture}.d.ts";
+      "*.jsx" = "\${capture}.js";
+      "*.s3db" = "\${capture}.\${extname}-*";
+      "*.sdb" = "\${capture}.\${extname}-*";
+      "*.sqlite" = "\${capture}.\${extname}-*";
+      "*.sqlite3" = "\${capture}.\${extname}-*";
+      "*.ts" = "\${capture}.js";
+      "*.tsx" = "\${capture}.ts";
+      "package.json" = "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock";
+      "tsconfig.json" = "tsconfig.*.json";
+    };
+
+    # 情報表示
+    "breadcrumbs.filePath" = "off";
+    "breadcrumbs.symbolPath" = "on";
+    "window.title" = "\${activeEditorShort} - \${rootName}";
+
+    # エディタ関連付け
+    "workbench.editorAssociations" = {
+      "*.copilotmd" = "vscode.markdown.preview.editor";
+      "*.db" = "default";
+      "*.svg" = "default";
+    };
+
+  };
+
+  formatting = {
+    # =======================================================================
+    #  4. フォーマット・Lint (FORMATTING & LINTING)
+    # =======================================================================
+
+    # 自動フォーマット
+    "editor.codeActionsOnSave" = {
+      "source.fixAll.eslint" = "explicit";
+      "source.organizeImports" = "explicit";
+    };
+    "editor.formatOnPaste" = true;
+    "editor.formatOnSave" = true;
+
+    # フォーマッター設定
+    "editor.defaultFormatter" = "esbenp.prettier-vscode";
+
+    # 自動整形
+    # ↓ 重要: files.insertFinalNewline / trimFinalNewlines / trimTrailingWhitespace は
+    #         「ファイル管理」ではなく「整形」のためここに集約
+    "editor.autoIndentOnPaste" = true;
+    "files.insertFinalNewline" = true;
+    "files.trimFinalNewlines" = true;
+    "files.trimTrailingWhitespace" = true;
+
+  };
+
+  languages = {
+    # =======================================================================
+    #  5. 言語・開発ツール (LANGUAGES & DEV TOOLS)
+    # =======================================================================
+
+    # JavaScript/TypeScript
+    "javascript.updateImportsOnFileMove.enabled" = "never";
+
+    # Svelte
+    "svelte.enable-ts-plugin" = true;
+
+    # Python
+    "python.languageServer" = "Default";
+
+    # Nix
+    "[nix]" = {
+      "editor.defaultFormatter" = "jnoortheen.nix-ide";
+    };
+
+    # Flutter
+
+    # C
+
+  };
+
+  external = {
+    # =======================================================================
+    #  6. Git・AI・外部連携 (GIT, AI & EXTERNAL)
+    # =======================================================================
+
+    # Git
+    "git.autofetch" = true;
+    "git.confirmSync" = false;
+    "gitlens.currentLine.enabled" = false;
+
+    # AI
+    "gitlens.ai.model" = "gemini:gemini-3-flash-preview";
+    "gitlens.ai.vscode.model" = "copilot:gpt-4.1";
+
+    # 翻訳
+    "vscodeGoogleTranslate.preferredLanguage" = "Japanese";
+
+    # リモート開発
+    "remote.autoForwardPortsSource" = "hybrid";
+
+  };
+
+  extensions = {
+    # =======================================================================
+    #  7. 拡張機能・カスタマイズ (EXTENSIONS & CUSTOMIZATION)
+    # =======================================================================
+
+    # カスタムCSS（環境依存パスに注意）
+    "vscode_custom_css.imports" = [
+      "https://gist.githubusercontent.com/Crysta1221/24c724fd9f475ef473dcf2c3d551b8c3/raw/a9e6920e39d78eeb43ea448d36a8eb215bbbbf35/style.css"
+    ];
+
+    # マルチコマンド
+    "multiCommand.commands" = [
+      {
+        "command" = "multiCommand.pasteAndNewline";
+        "sequence" = [
+          "editor.action.clipboardPasteAction"
+          "type"
+          { "text" = "\n"; }
+        ];
+      }
+    ];
+
+    # 拡張機能マーケットプレイス（antigravity用）
+    "antigravity.marketplaceExtensionGalleryServiceURL" = "https://marketplace.visualstudio.com/_apis/public/gallery";
+    "antigravity.marketplaceGalleryItemURL" = "https://marketplace.visualstudio.com/items";
+
+    # 拡張機能テレメトリ
+    "redhat.telemetry.enabled" = false;
+
+    "modaledit.insertStatusText" = "Insert";
+    "modaledit.normalStatusText" = "Command";
+    "modaledit.selectStatusText" = "$(paintcan) VISUAL";
+
+  };
+
+  coreAndDebug = {
+    # =======================================================================
+    #  8. パフォーマンス・検索・デバッグ (CORE & DEBUG)
+    # =======================================================================
+
+    # パフォーマンス最適化
+    "editor.largeFileOptimizations" = true;
+
+    # 検索設定
+    "search.exclude" = {
+      "**/*.map" = true;
+      "**/dist" = true;
+      "**/node_modules" = true;
+    };
+    "search.maxResults" = 2000;
+
+    # デバッグ
+    "debug.console.fontSize" = 13;
+    "debug.console.lineHeight" = 1.2;
+    "debug.toolBarLocation" = "floating";
+  };
+
+in
 {
   programs.vscode = {
     enable = true;
 
-    userSettings = {
-
-      # =======================================================================
-      #  1. 外観・視覚 (APPEARANCE & VISUAL)
-      # =======================================================================
-
-      # テーマ・アイコン
-      "workbench.colorTheme" = "R Dark Pro (Filter Night Late)";
-      "workbench.iconTheme" = "flow-dim";
-      "workbench.productIconTheme" = "tara-product-icons";
-
-      # カラーカスタマイズ（テーマ固有の調整）
-      "workbench.colorCustomizations" = {
-        "editorBracketHighlight.foreground1" = "#84a2d4";
-        "editorBracketHighlight.foreground2" = "#b683d4";
-        "editorBracketHighlight.foreground3" = "#d483a1";
-        "editorBracketHighlight.foreground4" = "#d4b683";
-        "editorBracketHighlight.foreground5" = "#a1d483";
-        "editorBracketHighlight.foreground6" = "#83d4b6";
-        "editorBracketPairGuide.activeBackground1" = "#84a2d4";
-        "editorBracketPairGuide.activeBackground2" = "#b683d4";
-        "editorBracketPairGuide.activeBackground3" = "#d483a1";
-        "editorBracketPairGuide.activeBackground4" = "#d4b683";
-        "editorBracketPairGuide.activeBackground5" = "#a1d483";
-        "editorBracketPairGuide.activeBackground6" = "#83d4b6";
-        "editorBracketPairGuide.background1" = "#84a2d440";
-        "editorBracketPairGuide.background2" = "#b683d440";
-        "editorBracketPairGuide.background3" = "#d483a140";
-        "editorBracketPairGuide.background4" = "#d4b68340";
-        "editorBracketPairGuide.background5" = "#a1d48340";
-        "editorBracketPairGuide.background6" = "#83d4b640";
-        "editorIndentGuide.activeBackground1" = "#84a2d4";
-        "editorIndentGuide.activeBackground2" = "#b683d4";
-        "editorIndentGuide.activeBackground3" = "#d483a1";
-        "editorIndentGuide.activeBackground4" = "#d4b683";
-        "editorIndentGuide.activeBackground5" = "#a1d483";
-        "editorIndentGuide.activeBackground6" = "#83d4b6";
-        "editorIndentGuide.background1" = "#84a2d440";
-        "editorIndentGuide.background2" = "#b683d440";
-        "editorIndentGuide.background3" = "#d483a140";
-        "editorIndentGuide.background4" = "#d4b68340";
-        "editorIndentGuide.background5" = "#a1d48340";
-        "editorIndentGuide.background6" = "#83d4b640";
-        "[Pink as Fox (blackest)]" = {
-          "window.activeBorder" = "#555555";
-          "window.inactiveBorder" = "#555555";
-          "editorGroup.border" = "#555555";
-          "editorGroupHeader.tabsBorder" = "#555555";
-          "tab.border" = "#555555";
-          "tab.activeBorder" = "#555555";
-          "tab.unfocusedActiveBorder" = "#555555";
-          "sideBar.border" = "#555555";
-          "sideBarSectionHeader.border" = "#555555";
-          "panel.border" = "#555555";
-          "panelSection.border" = "#555555";
-          "statusBar.border" = "#555555";
-          "activityBar.border" = "#555555";
-          "editorWidget.border" = "#555555";
-          "settings.headerBorder" = "#555555";
-          "titleBar.border" = "#555555";
-          "menubar.selectionBorder" = "#555555";
-          "input.border" = "#555555";
-          "dropdown.border" = "#555555";
-        };
-        "[Tara*]" = {
-          "statusBar.background" = "#FFFFFF14";
-          "statusBar.foreground" = "#FFFFFF";
-          "statusBarItem.prominentBackground" = "#FFFFFF26";
-          "statusBarItem.prominentForeground" = "#FFFFFF";
-          "statusBar.debuggingBackground" = "#FFFFFF33";
-          "statusBar.debuggingForeground" = "#FFFFFF";
-          "toolbar.activeBackground" = "#FFFFFF26";
-          "button.background" = "#FFFFFF";
-          "button.hoverBackground" = "#FFFFFFcc";
-          "extensionButton.separator" = "#FFFFFF33";
-          "extensionButton.background" = "#FFFFFF14";
-          "extensionButton.foreground" = "#FFFFFF";
-          "extensionButton.hoverBackground" = "#FFFFFF33";
-          "extensionButton.prominentForeground" = "#FFFFFF";
-          "extensionButton.prominentBackground" = "#FFFFFF14";
-          "extensionButton.prominentHoverBackground" = "#FFFFFF33";
-          "activityBarBadge.background" = "#FFFFFF";
-          "activityBar.activeBorder" = "#FFFFFF";
-          "activityBarTop.activeBorder" = "#FFFFFF";
-          "list.inactiveSelectionIconForeground" = "#FFFFFF";
-          "list.activeSelectionForeground" = "#FFFFFF";
-          "list.inactiveSelectionForeground" = "#FFFFFF";
-          "list.highlightForeground" = "#FFFFFF";
-          "sash.hoverBorder" = "#FFFFFF80";
-          "list.activeSelectionIconForeground" = "#FFFFFF";
-          "scrollbarSlider.activeBackground" = "#FFFFFF80";
-          "editorSuggestWidget.highlightForeground" = "#FFFFFF";
-          "textLink.foreground" = "#FFFFFF";
-          "progressBar.background" = "#FFFFFF";
-          "pickerGroup.foreground" = "#FFFFFF";
-          "tab.activeBorder" = "#FFFFFF";
-          "tab.activeBorderTop" = "#FFFFFF00";
-          "tab.unfocusedActiveBorder" = "#FFFFFF";
-          "tab.unfocusedActiveBorderTop" = "#FFFFFF00";
-          "tab.activeModifiedBorder" = "#FFFFFF00";
-          "notificationLink.foreground" = "#FFFFFF";
-          "editorWidget.resizeBorder" = "#FFFFFF";
-          "editorWidget.border" = "#FFFFFF";
-          "settings.modifiedItemIndicator" = "#FFFFFF";
-          "panelTitle.activeBorder" = "#FFFFFF";
-          "breadcrumb.activeSelectionForeground" = "#FFFFFF";
-          "menu.selectionForeground" = "#FFFFFF";
-          "menubar.selectionForeground" = "#FFFFFF";
-          "editor.findMatchBorder" = "#FFFFFF";
-          "selection.background" = "#FFFFFF40";
-          "statusBarItem.remoteBackground" = "#FFFFFF14";
-          "statusBarItem.remoteHoverBackground" = "#FFFFFF";
-          "statusBarItem.remoteForeground" = "#FFFFFF";
-          "notebook.inactiveFocusedCellBorder" = "#FFFFFF80";
-          "commandCenter.activeBorder" = "#FFFFFF80";
-          "chat.slashCommandForeground" = "#FFFFFF";
-          "chat.avatarForeground" = "#FFFFFF";
-          "activityBarBadge.foreground" = "#FFFFFF";
-          "button.foreground" = "#FFFFFF";
-          "statusBarItem.remoteHoverForeground" = "#FFFFFF";
-        };
-      };
-      "nishuuu.accentColor" = "white";
-
-      # フォント設定
-      "editor.fontFamily" = "'Monaspace Argon', 'Maple Mono NF CN', 'PlemolJP Console NF', 'Cascadia Code'";
-      "editor.fontLigatures" = "'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03'";
-      "editor.fontSize" = 14;
-      "editor.fontWeight" = "400";
-      "editor.lineHeight" = 1.4;
-
-      # UIコンポーネント
-      "explorer.compactFolders" = false;
-      "workbench.editor.showTabs" = "multiple";
-      "workbench.tree.indent" = 18;
-
-      # ミニマップ設定
-      "editor.minimap.autohide" = "mouseover";
-      "editor.minimap.enabled" = true;
-      "editor.minimap.maxColumn" = 100;
-      "editor.minimap.renderCharacters" = false;
-      "editor.minimap.showSlider" = "mouseover";
-      "editor.minimap.side" = "right";
-      "editor.minimap.size" = "proportional";
-
-      # スクロールバー
-      "editor.scrollbar.vertical" = "visible";
-      "editor.scrollbar.horizontal" = "auto";
-
-      # 視覚効果（拡張機能依存）
-      "glowrays.advancedMode" = true;
-      "glowrays.enable" = false;
-      "glowrays.intensity" = 1.6;
-      "material-icon-theme.activeIconPack" = "angular_ngrx";
-      "material-icon-theme.folders.theme" = "classic";
-      "nyanMode.nyanAlign" = "left";
-      "nyanMode.nyanDiagnostics" = true;
-      "nyanMode.nyanDisplayPercent" = false;
-      "powermode.combo.location" = "off";
-      "powermode.combo.threshold" = 1;
-      "powermode.combo.timeout" = 10;
-      "powermode.enabled" = true;
-      "powermode.presets" = "particles";
-      "powermode.shake.enabled" = false;
-      "resmon.show.cpufreq" = false;
-      "resmon.show.cputemp" = false;
-      "resmon.show.cpuusage" = false;
-      "resmon.show.disk" = false;
-      "resmon.show.mem" = false;
-
-      # =======================================================================
-      #  2. 操作・編集体験 (EDITOR & UX)
-      # =======================================================================
-
-      # カーソル
-      "editor.cursorBlinking" = "phase";
-      "editor.cursorSmoothCaretAnimation" = "on";
-      "editor.cursorStyle" = "block";
-
-      # スクロール
-      "editor.mouseWheelZoom" = true;
-      "editor.smoothScrolling" = true;
-      "workbench.list.smoothScrolling" = true;
-
-      # コード表示
-      "editor.bracketPairColorization.enabled" = true;
-      "editor.renderWhitespace" = "trailing";
-      "editor.semanticHighlighting.enabled" = true;
-      "editor.stickyScroll.enabled" = true;
-      "editor.stickyScroll.maxLineCount" = 5;
-      "editor.unicodeHighlight.nonBasicASCII" = false;
-
-      # エディターガイド
-      "blockhighlight.accentCurrentLine" = true;
-      "blockhighlight.background" = [ "255" "255" "255" ".00" ]; # "80", "180", "255", ".015"
-      "blockhighlight.isWholeLine" = false;
-      "dimmer.enabled" = false;
-      "editor.guides.bracketPairs" = true;
-      "editor.guides.bracketPairsHorizontal" = true;
-      "editor.guides.highlightActiveIndentation" = true;
-      "editor.guides.indentation" = true;
-      "editor.renderLineHighlight" = "all";
-      "indentRainbow.colors" = [
-        "#84a2d430" # #84a2d4
-        "#b683d430" # #b683d4
-        "#d483a130" # #d483a1
-        "#d4b68330" # #d4b683
-        "#a1d48330" # #a1d483
-        "#83d4b630" # #83d4b6
-      ];
-      "indentRainbow.indicatorStyle" = "light";
-      "indentRainbow.lightIndicatorStyleLineWidth" = 1;
-      "textIndentHighlighter.colors" = [
-        "#84a2d4"
-        "#b683d4"
-        "#d483a1"
-        "#d4b683"
-        "#a1d483"
-        "#83d4b6"
-      ];
-
-      # 補完・提案
-      "editor.inlayHints.enabled" = "onUnlessPressed";
-      "editor.inlineSuggest.edits.allowCodeShifting" = "horizontal";
-      "editor.linkedEditing" = true;
-      "editor.quickSuggestions" = {
-        "strings" = true;
-      };
-
-      # 安全性・信頼性
-      "editor.accessibilitySupport" = "auto";
-      "editor.rename.enablePreview" = false;
-
-      # エラー表示
-      "errorLens.excludeByMessage" = [ "Unknown word" ];
-      "errorLens.gutterIconsEnabled" = true;
-
-      # タブ
-      "editor.tabSize" = 2;
-
-      # Diffエディタ
-      "diffEditor.codeLens" = true;
-      "diffEditor.maxComputationTime" = 0;
-
-      # ModalEdit
-      "modaledit.keybindings" = {
-        "i" = "modaledit.enterInsert";
-        "escape" = "modaledit.enterNormal";
-      };
-
-      # =======================================================================
-      #  3. ファイル・エディタ制御 (FILES & EDITOR CONTROL)
-      # =======================================================================
-
-      # ファイル管理
-      "files.eol" = "\n";
-      "files.exclude" = {
-        "**/.git" = true;
-        "**/.vscode" = true;
-        "**/dist" = true;
-        "**/node_modules" = true;
-      };
-      "files.watcherExclude" = {
-        "**/build/**" = true;
-        "**/coverage/**" = true;
-        "**/dist/**" = true;
-        "**/node_modules/**" = true;
-      };
-
-      # ファイルネスティング（関連ファイルのグループ化）
-      "explorer.fileNesting.patterns" = {
-        "*.db" = "\${capture}.\${extname}-*";
-        "*.db3" = "\${capture}.\${extname}-*";
-        "*.js" = "\${capture}.js.map, \${capture}.min.js, \${capture}.d.ts";
-        "*.jsx" = "\${capture}.js";
-        "*.s3db" = "\${capture}.\${extname}-*";
-        "*.sdb" = "\${capture}.\${extname}-*";
-        "*.sqlite" = "\${capture}.\${extname}-*";
-        "*.sqlite3" = "\${capture}.\${extname}-*";
-        "*.ts" = "\${capture}.js";
-        "*.tsx" = "\${capture}.ts";
-        "package.json" = "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock";
-        "tsconfig.json" = "tsconfig.*.json";
-      };
-
-      # 情報表示
-      "breadcrumbs.filePath" = "off";
-      "breadcrumbs.symbolPath" = "on";
-      "window.title" = "\${activeEditorShort} - \${rootName}";
-
-      # エディタ関連付け
-      "workbench.editorAssociations" = {
-        "*.copilotmd" = "vscode.markdown.preview.editor";
-        "*.db" = "default";
-        "*.svg" = "default";
-      };
-
-      # =======================================================================
-      #  4. フォーマット・Lint (FORMATTING & LINTING)
-      # =======================================================================
-
-      # 自動フォーマット
-      "editor.codeActionsOnSave" = {
-        "source.fixAll.eslint" = "explicit";
-        "source.organizeImports" = "explicit";
-      };
-      "editor.formatOnPaste" = true;
-      "editor.formatOnSave" = true;
-
-      # フォーマッター設定
-      "editor.defaultFormatter" = "esbenp.prettier-vscode";
-
-      # 自動整形
-      # ↓ 重要: files.insertFinalNewline / trimFinalNewlines / trimTrailingWhitespace は
-      #         「ファイル管理」ではなく「整形」のためここに集約
-      "editor.autoIndentOnPaste" = true;
-      "files.insertFinalNewline" = true;
-      "files.trimFinalNewlines" = true;
-      "files.trimTrailingWhitespace" = true;
-
-      # =======================================================================
-      #  5. 言語・開発ツール (LANGUAGES & DEV TOOLS)
-      # =======================================================================
-
-      # JavaScript/TypeScript
-      "javascript.updateImportsOnFileMove.enabled" = "never";
-
-      # Svelte
-      "svelte.enable-ts-plugin" = true;
-
-      # Python
-      "python.languageServer" = "Default";
-
-      # Nix
-      "[nix]" = {
-        "editor.defaultFormatter" = "jnoortheen.nix-ide";
-      };
-
-      # Flutter
-
-      # C
-
-      # =======================================================================
-      #  6. Git・AI・外部連携 (GIT, AI & EXTERNAL)
-      # =======================================================================
-
-      # Git
-      "git.autofetch" = true;
-      "git.confirmSync" = false;
-      "gitlens.currentLine.enabled" = false;
-
-      # AI
-      "gitlens.ai.model" = "gemini:gemini-3-flash-preview";
-      "gitlens.ai.vscode.model" = "copilot:gpt-4.1";
-
-      # 翻訳
-      "vscodeGoogleTranslate.preferredLanguage" = "Japanese";
-
-      # リモート開発
-      "remote.autoForwardPortsSource" = "hybrid";
-
-      # =======================================================================
-      #  7. 拡張機能・カスタマイズ (EXTENSIONS & CUSTOMIZATION)
-      # =======================================================================
-
-      # カスタムCSS（環境依存パスに注意）
-      "vscode_custom_css.imports" = [
-        "https://gist.githubusercontent.com/Crysta1221/24c724fd9f475ef473dcf2c3d551b8c3/raw/a9e6920e39d78eeb43ea448d36a8eb215bbbbf35/style.css"
-      ];
-
-      # マルチコマンド
-      "multiCommand.commands" = [
-        {
-          "command" = "multiCommand.pasteAndNewline";
-          "sequence" = [
-            "editor.action.clipboardPasteAction"
-            "type"
-            { "text" = "\n"; }
-          ];
-        }
-      ];
-
-      # 拡張機能マーケットプレイス（antigravity用）
-      "antigravity.marketplaceExtensionGalleryServiceURL" = "https://marketplace.visualstudio.com/_apis/public/gallery";
-      "antigravity.marketplaceGalleryItemURL" = "https://marketplace.visualstudio.com/items";
-
-      # 拡張機能テレメトリ
-      "redhat.telemetry.enabled" = false;
-
-      "modaledit.insertStatusText" = "Insert";
-      "modaledit.normalStatusText" = "Command";
-      "modaledit.selectStatusText" = "$(paintcan) VISUAL";
-
-      # =======================================================================
-      #  8. パフォーマンス・検索・デバッグ (CORE & DEBUG)
-      # =======================================================================
-
-      # パフォーマンス最適化
-      "editor.largeFileOptimizations" = true;
-
-      # 検索設定
-      "search.exclude" = {
-        "**/*.map" = true;
-        "**/dist" = true;
-        "**/node_modules" = true;
-      };
-      "search.maxResults" = 2000;
-
-      # デバッグ
-      "debug.console.fontSize" = 13;
-      "debug.console.lineHeight" = 1.2;
-      "debug.toolBarLocation" = "floating";
-    };
+    userSettings = lib.mkMerge [ appearance editorUX filesAndEditor formatting languages external extensions coreAndDebug ];
   };
 }
