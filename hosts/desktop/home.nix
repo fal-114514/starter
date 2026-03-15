@@ -27,7 +27,8 @@ in
   # ===========================================================================
   # Imports / 外部ファイルインポート
   # ===========================================================================
-  imports = lib.optionals enableGnome [ ./config/DE/gnome/default.nix ]
+  imports = [ ./config/vscode/vscode.nix ]
+          ++ lib.optionals enableGnome [ ./config/DE/gnome/default.nix ]
           ++ lib.optionals enableKde [ ./config/DE/kde/default.nix ]
           ++ lib.optionals enableNiri [ ./config/DE/niri/default.nix ];
 
