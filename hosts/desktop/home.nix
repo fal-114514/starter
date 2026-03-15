@@ -2,7 +2,7 @@
 # Home Manager Configuration / Home Manager設定
 # =============================================================================
 
-{ pkgs, lib, ... }:
+{ pkgs, lib, enableGnome, enableKde, enableNiri, enableMozc, fcitx5Layout, ... }:
 
 let
   username = "fal";
@@ -13,15 +13,8 @@ let
   # ---------------------------------------------------------------------------
   # Desktop Settings / デスクトップ環境設定
   # ---------------------------------------------------------------------------
-  enableGnome = true;
-  enableKde = true;
-  enableNiri = true;
-
-  # ---------------------------------------------------------------------------
-  # Input Method Settings / 入力メソッド設定
-  # ---------------------------------------------------------------------------
-  enableMozc = true;
-  fcitx5Layout = "us";
+  # enableGnome, enableKde, enableNiri, enableMozc, fcitx5Layout は
+  # hosts/desktop/variables.nix で定義され、extraSpecialArgs 経由で渡される
 in
 {
   # ===========================================================================

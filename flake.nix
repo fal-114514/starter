@@ -19,14 +19,19 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
   };
 
-  outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, nix-flatpak, ... }@inputs:
+  let
+    # デスクトップ共通変数を読み込み、両モジュールに渡す
+    desktopVars = import ./hosts/desktop/variables.nix;
+  in
+  {
     nixosConfigurations = {
       # Desktop Configuration / デスクトップ設定 (Personal / 個人用)
       desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
 
         # Pass arguments to modules / モジュールに引数を渡す
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs; } // desktopVars;
 
         modules = [
           ./hosts/desktop/configuration.nix
@@ -39,7 +44,7 @@
             home-manager.useUserPackages = true;
             home-manager.users.fal = import ./hosts/desktop/home.nix;
             home-manager.backupFileExtension = "backup";
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.extraSpecialArgs = { inherit inputs; } // desktopVars;
           }
         ];
       };

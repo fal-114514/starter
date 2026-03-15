@@ -2,7 +2,7 @@
 # NixOS System Configuration / NixOSシステム設定
 # =============================================================================
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, enableGnome, enableKde, enableNiri, enableMozc, fcitx5Layout, ... }:
 
 let
   # ---------------------------------------------------------------------------
@@ -22,9 +22,8 @@ let
   # ---------------------------------------------------------------------------
   # Desktop Environment / デスクトップ環境
   # ---------------------------------------------------------------------------
-  enableGnome = true;
-  enableKde = true;
-  enableNiri = true;
+  # enableGnome, enableKde, enableNiri, enableMozc, fcitx5Layout は
+  # hosts/desktop/variables.nix で定義され、specialArgs 経由で渡される
 
   # Display Manager: "tuigreet", "gdm", "sddm", "regreet", "lemurs"
   displayManager = "tuigreet";
@@ -32,8 +31,7 @@ let
   # ---------------------------------------------------------------------------
   # Input Method / 入力メソッド
   # ---------------------------------------------------------------------------
-  enableMozc = true;
-  fcitx5Layout = "us";
+  # enableMozc, fcitx5Layout は variables.nix で定義
 in
 {
   imports = [
