@@ -32,17 +32,19 @@ nixos-generate-config --show-hardware-config > hosts/<your-host-name>/hardware-c
 
 ### ステップ B: 変数と設定の調整
 
-`hosts/<your-host-name>/configuration.nix` および `home.nix` を編集します。ファイル冒頭の `let ... in` ブロックで変数を定義しています。
+**共有変数（`variables.nix`）** を編集してデスクトップ環境の有効化フラグを設定します。
 
-- `username`: ユーザー名
-- `hostname`: ホスト名
-- `enableGnome`, `enableNiri` など: デスクトップ環境の有効化スイッチ
+- `enableGnome`, `enableKde`, `enableNiri`: デスクトップ環境の有効化スイッチ
+- `enableMozc`, `fcitx5Layout`: 入力メソッドの設定
+
+次に `configuration.nix` で `username` / `hostname` 等、`home.nix` で `gitEmail` 等の内部変数を編集します。
 
 ### ステップ C: ホスト固有の設定
 
 - `hosts/<your-host-name>/configuration.nix`: システム全体の設定
 - `hosts/<your-host-name>/home.nix`: ユーザー個別の設定
-- `hosts/<your-host-name>/config/DE/`: デスクトップ環境別の設定（`niri/default.nix`, `niri/config.kdl` など）
+- `hosts/<your-host-name>/variables.nix`: 両ファイルで共有するフラグ
+- `hosts/<your-host-name>/modules/DE/`: デスクトップ環境別の設定（`niri/default.nix`, `niri/config.kdl` など）
 
 ## 4. `flake.nix` への登録
 

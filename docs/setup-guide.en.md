@@ -32,17 +32,19 @@ nixos-generate-config --show-hardware-config > hosts/<your-host-name>/hardware-c
 
 ### Step B: Adjust Variables and Settings
 
-Edit `hosts/<your-host-name>/configuration.nix` and `home.nix`. Variables are defined in the `let ... in` block at the beginning of each file.
+Edit **`variables.nix`** to configure the shared flags for desktop environments:
 
-- `username`: Your username
-- `hostname`: Hostname
-- `enableGnome`, `enableNiri`, etc.: Toggle switches for desktop environments
+- `enableGnome`, `enableKde`, `enableNiri`: Toggle switches for desktop environments
+- `enableMozc`, `fcitx5Layout`: Input method settings
+
+Then edit the local variables in `configuration.nix` (`username`, `hostname`, etc.) and `home.nix` (`gitEmail`, etc.).
 
 ### Step C: Host-Specific Settings
 
 - `hosts/<your-host-name>/configuration.nix`: System-wide settings
 - `hosts/<your-host-name>/home.nix`: User-specific settings (Home Manager)
-- `hosts/<your-host-name>/config/DE/`: Desktop environment-specific settings (e.g., `niri/default.nix`, `niri/config.kdl`)
+- `hosts/<your-host-name>/variables.nix`: Shared flags used by both files above
+- `hosts/<your-host-name>/modules/DE/`: Desktop environment-specific settings (e.g., `niri/default.nix`, `niri/config.kdl`)
 
 ## 4. Registering in `flake.nix`
 
